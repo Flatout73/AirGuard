@@ -96,12 +96,13 @@ object BLEScanner {
         // Timber.d("BLE ScanCallback unregistered")
     }
 
+    @OptIn(ExperimentalStdlibApi::class)
     private var ownScanCallback = object: ScanCallback() {
         override fun onScanResult(callbackType: Int, result: ScanResult?) {
             super.onScanResult(callbackType, result)
             // TODO: Add scan result to DB here. Detection events should not be to close after each other.
             // New detection events (Beacons) every 15min
-            // Timber.d("Found a device $result")
+            Timber.d("[AirFog] Found a device ${result?.device?.address}: ${result?.scanRecord?.bytes?.toHexString()}")
             result?.let { scanResult ->
                 scanResults.add(0, scanResult)
                 if (scanResults.size > 10) {

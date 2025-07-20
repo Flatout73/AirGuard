@@ -54,6 +54,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ATTrackingDetection"
         android:localeConfig="@xml/locales_config"
+        android:usesCleartextTraffic="true"
         android:largeHeap="true"
         tools:targetApi="tiramisu"
         android:dataExtractionRules="@xml/data_extraction_rules"

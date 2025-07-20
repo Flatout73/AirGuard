@@ -389,14 +389,16 @@ object BackgroundBluetoothScanner {
 
                 if (wrappedScanResult.connectionState !in DeviceManager.unsafeConnectionState) {
                     Timber.d("Device is safe and will be hidden to the user!")
-                    device.safeTracker = true
+
                 }
+                device.safeTracker = false
 
                 Timber.d("Add new Device to the database!")
                 deviceRepository.insert(device)
             } else {
                 Timber.d("Device already in the database... Updating the last seen date!")
                 device.lastSeen = discoveryDate
+                device.safeTracker = false
                 deviceRepository.update(device)
             }
 

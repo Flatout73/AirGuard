@@ -2,7 +2,13 @@ package de.seemoo.at_tracking_detection.ui.tracking
 
 import android.content.Intent
 import android.net.Uri
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.map
+import androidx.lifecycle.viewModelScope
+import com.google.gson.FieldNamingPolicy
+import com.google.gson.GsonBuilder
 import de.seemoo.at_tracking_detection.database.models.Beacon
 import de.seemoo.at_tracking_detection.database.models.device.BaseDevice
 import de.seemoo.at_tracking_detection.database.models.device.Connectable
@@ -11,10 +17,21 @@ import de.seemoo.at_tracking_detection.database.models.device.DeviceType
 import de.seemoo.at_tracking_detection.database.repository.BeaconRepository
 import de.seemoo.at_tracking_detection.database.repository.DeviceRepository
 import de.seemoo.at_tracking_detection.database.repository.NotificationRepository
+import de.seemoo.at_tracking_detection.util.Utility
+import de.seemoo.at_tracking_detection.util.ble.AirFog
+import de.seemoo.at_tracking_detection.util.ble.AirLocation
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.coroutines.executeAsync
 import timber.log.Timber
 import java.time.LocalDateTime
 import javax.inject.Inject
+
 
 class TrackingViewModel @Inject constructor(
     private val notificationRepository: NotificationRepository,
@@ -115,6 +132,49 @@ class TrackingViewModel @Inject constructor(
             val webpage: Uri = Uri.parse(manufacturerWebsiteUrl.value)
             val intent = Intent(Intent.ACTION_VIEW, webpage)
             context.startActivity(intent)
+        }
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    suspend fun sendAirfog() {
+        val url = "http://airfog.sec.univie.ac.at/relay-ble"
+
+        val locationList = markerLocations.value?.let { Utility.fetchLocationListFromBeaconList(it) }
+        val location = locationList?.lastOrNull()?.let { AirLocation(it.latitude, it.longitude) }
+
+        markerLocations.value?.lastOrNull()?.manufacturerData.let { data ->
+            val airFog = AirFog(
+                device.value?.uniqueId ?: "No",
+                deviceAddress.value ?: "No",
+                location,
+                data?.copyOf(35)
+            )
+
+            val client = OkHttpClient()
+            val gson = GsonBuilder()
+                .registerTypeHierarchyAdapter(ByteArray::class.java, ByteArrayToBase64TypeAdapter())
+                .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+                .create()
+            val body = gson.toJson(airFog).toRequestBody()
+            val request = Request.Builder()
+                .addHeader("x-api-key", "3acba069-576f-4c01-8d15-25f446ac0a75")
+                .addHeader("User-Agent", DeviceType.userReadableName(device.value?.deviceType ?: DeviceType.UNKNOWN))
+                .addHeader("Content-Type", "application/json")
+                .method("POST", body)
+                .url(url)
+                .build()
+
+            try {
+                client.newCall(request).executeAsync().use { response ->
+                    withContext(Dispatchers.IO) {
+                        println(response.body.string())
+                    }
+                }
+            } catch (ex: Exception) {
+                println(ex)
+            }
+
+
         }
     }
 }

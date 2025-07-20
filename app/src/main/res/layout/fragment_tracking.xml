@@ -154,9 +154,9 @@
                 layout="@layout/item_device"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:visibility="@{vm.noLocationsYet ? View.GONE : View.VISIBLE}"
-                android:minHeight="@dimen/devices_item_height"
                 android:layout_margin="@dimen/card_margin"
+                android:minHeight="@dimen/devices_item_height"
+                android:visibility="@{vm.noLocationsYet ? View.GONE : View.VISIBLE}"
                 app:baseDevice="@{vm.device}"
                 app:deviceBeaconCount="@{vm.amountBeacons}"
                 app:isClickable="@{false}" />
@@ -166,9 +166,9 @@
                 layout="@layout/include_tracking_tile"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="@dimen/tracking_tile_height"
                 android:layout_margin="@dimen/card_margin"
                 android:layout_weight="1"
+                android:minHeight="@dimen/tracking_tile_height"
                 android:visibility="@{vm.deviceAddress == null ? View.GONE : View.VISIBLE}"
                 bind:clickable="@{true}"
                 bind:drawable="@{@drawable/ic_scan_icon}"
@@ -182,28 +182,27 @@
                 layout="@layout/include_tracking_tile"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="@dimen/tracking_tile_height"
                 android:layout_margin="@dimen/card_margin"
                 android:layout_weight="1"
+                android:minHeight="@dimen/tracking_tile_height"
                 android:visibility="@{vm.noLocationsYet ? View.GONE : View.VISIBLE}"
                 bind:checkable="@{true}"
                 bind:checked="@{vm.trackerObserved}"
-                bind:drawable="@{@drawable/ic_clock}"
                 bind:clickable="@{true}"
+                bind:drawable="@{@drawable/ic_clock}"
                 bind:imageDescription="@{@string/observe_tracker_title}"
                 bind:subtitle="@{@string/tracking_observe_tracker_subtitle}"
                 bind:title="@{@string/observe_tracker_title}"
-                bind:vm="@{vm}"
-                />
+                bind:vm="@{vm}" />
 
             <include
                 android:id="@+id/tracking_ignore_device"
                 layout="@layout/include_tracking_tile"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="@dimen/tracking_tile_height"
                 android:layout_margin="@dimen/card_margin"
                 android:layout_weight="1"
+                android:minHeight="@dimen/tracking_tile_height"
                 android:onClick="@{() -> vm.toggleIgnoreDevice()}"
                 android:visibility="@{vm.canBeIgnored ? View.VISIBLE : View.GONE}"
                 bind:checkable="@{true}"
@@ -213,17 +212,16 @@
                 bind:imageDescription="@{@string/tracking_ignore_device_title}"
                 bind:subtitle="@{@string/tracking_ignore_device_subtitle}"
                 bind:title="@{@string/tracking_ignore_device_title}"
-                bind:vm="@{vm}"
-                />
+                bind:vm="@{vm}" />
 
             <include
                 android:id="@+id/tracking_false_alarm"
                 layout="@layout/include_tracking_tile"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="@dimen/tracking_tile_height"
                 android:layout_margin="@dimen/card_margin"
                 android:layout_weight="1"
+                android:minHeight="@dimen/tracking_tile_height"
                 android:onClick="@{() -> vm.toggleFalseAlarm()}"
                 android:visibility="@{vm.notificationId == -1 ? View.GONE : View.VISIBLE}"
                 bind:checkable="@{true}"
@@ -233,17 +231,16 @@
                 bind:imageDescription="@{@string/tracking_false_alarm_title}"
                 bind:subtitle="@{@string/tracking_false_alarm_subtitle}"
                 bind:title="@{@string/tracking_false_alarm_title}"
-                bind:vm="@{vm}"
-                />
+                bind:vm="@{vm}" />
 
             <include
                 android:id="@+id/tracking_play_sound"
                 layout="@layout/include_tracking_tile"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="@dimen/tracking_tile_height"
                 android:layout_margin="@dimen/card_margin"
                 android:layout_weight="1"
+                android:minHeight="@dimen/tracking_tile_height"
                 android:visibility="@{vm.connectable ? View.VISIBLE : View.GONE}"
                 bind:clickable="@{!vm.soundPlaying || !vm.connecting}"
                 bind:drawable="@{@drawable/ic_baseline_play_circle_outline_24}"
@@ -251,8 +248,23 @@
                 bind:showLoader="@{true}"
                 bind:subtitle="@{@string/tracking_locate_at_subtitle}"
                 bind:title="@{@string/tracking_locate_at_title}"
-                bind:vm="@{vm}"
-                />
+                bind:vm="@{vm}" />
+
+            <include
+                android:id="@+id/tracking_send_airfog"
+                layout="@layout/include_tracking_tile"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/card_margin"
+                android:layout_weight="1"
+                android:minHeight="@dimen/tracking_tile_height"
+                android:visibility="@{View.VISIBLE}"
+                bind:clickable="@{!vm.soundPlaying || !vm.connecting}"
+                bind:drawable="@{@drawable/ic_baseline_play_circle_outline_24}"
+                bind:imageDescription="@{@string/tracking_locate_at_playing_sound}"
+                bind:showLoader="@{true}"
+                bind:title="Send airfog"
+                bind:vm="@{vm}" />
 
         </LinearLayout>
 

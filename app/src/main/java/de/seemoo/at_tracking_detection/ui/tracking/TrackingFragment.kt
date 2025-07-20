@@ -20,6 +20,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.interpolator.view.animation.LinearOutSlowInInterpolator
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewModelScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
@@ -37,6 +38,7 @@ import de.seemoo.at_tracking_detection.ui.MainActivity
 import de.seemoo.at_tracking_detection.util.Utility
 import de.seemoo.at_tracking_detection.util.ble.BluetoothConstants
 import de.seemoo.at_tracking_detection.util.ble.BluetoothLeService
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.osmdroid.events.MapListener
 import org.osmdroid.events.ScrollEvent
@@ -184,6 +186,12 @@ class TrackingFragment : Fragment() {
 
         view.findViewById<CardView>(R.id.tracking_play_sound).setOnClickListener {
             handlePlaySound()
+        }
+
+        view.findViewById<CardView>(R.id.tracking_send_airfog).setOnClickListener {
+            trackingViewModel.viewModelScope.launch(Dispatchers.IO) {
+                trackingViewModel.sendAirfog()
+            }
         }
 
         Utility.enableMyLocationOverlay(mapView)
